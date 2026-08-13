@@ -1,0 +1,52 @@
+# --- WARNING: Run this script as Administrator ---
+# This will remove common bloatware apps from Windows 10/11.
+# It is designed to be safe and only target known apps [citation:2].
+
+# List of known bloatware packages
+$AppsList = @(
+    "Microsoft.3DBuilder",
+    "Microsoft.BingFinance",
+    "Microsoft.BingNews",
+    "Microsoft.BingSports",
+    "Microsoft.BingWeather",
+    "Microsoft.GetHelp",
+    "Microsoft.Getstarted",
+    "Microsoft.Messaging",
+    "Microsoft.Microsoft3DViewer",
+    "Microsoft.MicrosoftOfficeHub",
+    "Microsoft.MicrosoftSolitaireCollection",
+    "Microsoft.MicrosoftStickyNotes",
+    "Microsoft.MSPaint",
+    "Microsoft.Office.OneNote",
+    "Microsoft.OneConnect",
+    "Microsoft.People",
+    "Microsoft.Print3D",
+    "Microsoft.SkypeApp",
+    "Microsoft.Wallet",
+    "Microsoft.WindowsAlarms",
+    "Microsoft.WindowsCamera",
+    "Microsoft.Windows.Photos",
+    "Microsoft.WindowsSoundRecorder",
+    "Microsoft.XboxApp",
+    "Microsoft.XboxGameCallableUI",
+    "Microsoft.XboxGamingOverlay",
+    "Microsoft.XboxIdentityProvider",
+    "Microsoft.XboxSpeechToTextOverlay",
+    "Microsoft.YourPhone",
+    "Microsoft.ZuneMusic",
+    "Microsoft.ZuneVideo",
+    "king.com.CandyCrushSaga",
+    "king.com.CandyCrushSodaSaga",
+    "Facebook.Facebook",
+    "SpotifyAB.SpotifyMusic",
+    "Disney.37853FC22B2CE"
+    # Add more package names here as needed. You can get full list with: Get-AppxPackage | Select Name
+)
+
+foreach ($App in $AppsList) {
+    Write-Host "Attempting to remove: $App" -ForegroundColor Yellow
+    Get-AppxPackage -Name $App -AllUsers | Remove-AppxPackage -ErrorAction SilentlyContinue
+    Get-AppxProvisionedPackage -Online | Where-Object { $_.PackageName -like "$App*" } | Remove-AppxProvisionedPackage -Online -ErrorAction SilentlyContinue
+}
+
+Write-Host "Bloatware removal process completed." -ForegroundColor Green
