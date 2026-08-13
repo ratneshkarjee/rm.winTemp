@@ -1,0 +1,27 @@
+# Cleanup with progress messages
+$patterns = @(
+    "Rtmp*",        # R temporary files
+    "QGIS3*",       # QGIS temporary files  
+    "processing*",  # QGIS processing outputs
+    "grass*",       # GRASS GIS temp files
+    "saga*",        # SAGA GIS temp files
+    "gdal*"         # GDAL temp files
+)
+
+Write-Host "Cleaning temporary files..." -ForegroundColor Cyan
+
+$count = 0
+foreach ($pattern in $patterns) {
+    $items = Get-ChildItem -Path "$env:TEMP\$pattern" -Directory -ErrorAction SilentlyContinue
+    if ($items) {
+        $count += $items.Count
+        Remove-Item -Path "$env:TEMP\$pattern" -Recurse -Force -ErrorAction SilentlyContinue
+    }
+}
+
+# Clean general temp
+$tempFiles = Get-ChildItem -Path "$env:TEMP\*" -File -ErrorAction SilentlyContinue
+$count += $tempFiles.Count
+Remove-Item -Path "$env:TEMP\*" -Recurse -Force -ErrorAction SilentlyContinue
+
+Write-Host "Removed $count items from temp folder" -ForegroundColor Green
